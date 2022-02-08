@@ -12,9 +12,13 @@ from blockchain import Blockchain, Block
 
 seed(0)
 # Random Transactions generator
-def random_alphanumeric(length, char_set = string.ascii_letters):
+def random_transaction():
+    names = ["Alice", "Bob", "Mallory", "Jack", "Dina", "Ehab", "Mahmoud", "Salma", "Mazen", "Hesham"]
+    transaction = {"sender": names[random.randint(0,len(names)-1)],
+    "receiver": names[random.randint(0,len(names)-1)],
+    "amount": random.randint(10, 1000) }
 
-    return ''.join( random.choice(char_set) for _ in range(length) )
+    return transaction
 
 app =  Flask(__name__)
 blockchain = Blockchain()
@@ -24,7 +28,7 @@ blockchain = Blockchain()
 def mine_block(): 
 
     for t in range(random.randint(0, 5)):
-        blockchain.add_new_transaction(random_alphanumeric(random.randint(10, 30)))
+        blockchain.add_new_transaction(random_transaction())
         
     block = blockchain.mine()
     chain_data = []
@@ -37,7 +41,7 @@ def mine_block():
 def attack(): 
 
     for t in range(random.randint(0, 5)):
-        blockchain.add_new_transaction(random_alphanumeric(random.randint(10, 30)))
+        blockchain.add_new_transaction(random_transaction())
         
     block = blockchain.mine()
     chain_data = []
