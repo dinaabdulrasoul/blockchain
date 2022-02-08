@@ -33,12 +33,31 @@ def mine_block():
     return json.dumps({"chain": chain_data})
 
 # Mining a new block
+@app.route('/attack', methods=['GET'])
+def attack(): 
+
+    for t in range(random.randint(0, 5)):
+        blockchain.add_new_transaction(random_alphanumeric(random.randint(10, 30)))
+        
+    block = blockchain.mine()
+    chain_data = []
+    for block in blockchain.chain:
+        chain_data.append(block.__dict__)
+    blockchain.chain[1].transactions = "fake_transactions"
+
+    if blockchain.check_chain_validity() == True:
+        return "VALID CHAIN"
+    elif blockchain.check_chain_validity() == False:
+        return "ATTACK - INVALID CHAIN"
+
+
+# Check if chain is invalid
 @app.route('/chain_validity', methods=['GET'])
 def chain_validity(): 
     if blockchain.check_chain_validity() == True:
-        return "VALID"
+        return "VALID CHAIN"
     elif blockchain.check_chain_validity() == False:
-        return "INVALID"
+        return "INVALID CHAIN"
 
 
 
