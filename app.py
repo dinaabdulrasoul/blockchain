@@ -1,13 +1,14 @@
 from hashlib import sha256
 import json
 import time
+from xml.etree.ElementTree import TreeBuilder
 from flask import Flask, request
 import requests
 from random import seed, random
 import random
 import string
 from blockchain import Blockchain, Block
-# curl  http://127.0.0.1:4000/mine_block
+# curl  http://127.0.0.1:4000/check_validity
 
 seed(0)
 # Random Transactions generator
@@ -30,6 +31,16 @@ def mine_block():
     for block in blockchain.chain:
         chain_data.append(block.__dict__)
     return json.dumps({"chain": chain_data})
+
+# Mining a new block
+@app.route('/chain_validity', methods=['GET'])
+def chain_validity(): 
+    if blockchain.check_chain_validity() == True:
+        return "VALID"
+    elif blockchain.check_chain_validity() == False:
+        return "INVALID"
+
+
 
 @app.route('/chain', methods=['GET'])
 def get_chain():

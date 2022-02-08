@@ -107,6 +107,18 @@ class Blockchain:
 
         self.unconfirmed_transactions = []
         return new_block.index
+    
+    def check_chain_validity(self):
+        for i in range(1, len(self.chain)):
+            current = self.chain[i]
+            previous = self.chain[i-1]
+            if(current.hash != current.hash_computation()):
+                print("The current hash of the block does not equal the generated hash of the block.")
+                return False
+            if(current.previous_hash != previous.hash_computation()):
+                print("The previous block's hash does not equal the previous hash value stored in the current block.")
+                return False
+        return True
 
 
 
