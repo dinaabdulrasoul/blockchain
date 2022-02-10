@@ -4,7 +4,7 @@ from flask import Flask
 from random import seed, random
 import random
 from blockchain import Blockchain
-# curl  http://127.0.0.1:4000/check_validity
+# curl  http://127.0.0.1:4000/mine_blocks
 
 seed(0)
 # Random Transactions generator
@@ -26,7 +26,7 @@ replica = Blockchain()
 def mine_blocks():
     global blockchain
     global replica
-    attacker_compute_power = 0.999 ## the higher this value is, the lower the security of the system
+    attacker_compute_power = 0.3 ## the higher this value is, the lower the security of the system
     while True:
         p = random.random()
         if p > attacker_compute_power:
@@ -55,7 +55,7 @@ def mine_blocks():
     return json.dumps({"chain": chain_data})
     
 
-# Mining a new block
+# Simple attack
 @app.route('/attack', methods=['GET'])
 def attack(): 
 
@@ -72,16 +72,6 @@ def attack():
         return "VALID CHAIN"
     elif blockchain.check_chain_validity() == False:
         return "ATTACK - INVALID CHAIN"
-
-
-# Check if chain is invalid
-@app.route('/chain_validity', methods=['GET'])
-def chain_validity(): 
-    if blockchain.check_chain_validity() == True:
-        return "VALID CHAIN"
-    elif blockchain.check_chain_validity() == False:
-        return "INVALID CHAIN"
-
 
 
 @app.route('/chain', methods=['GET'])
