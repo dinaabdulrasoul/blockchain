@@ -20,13 +20,6 @@ app =  Flask(__name__)
 blockchain = Blockchain()
 replica = Blockchain()
 
-def add_block(blockchain):
-    for t in range(random.randint(0, 5)):
-        blockchain.add_new_transaction(random_transaction())
-        
-    block = blockchain.mine()
-
-
 
 # Mining a new block
 @app.route('/mine_blocks', methods=['GET'])
