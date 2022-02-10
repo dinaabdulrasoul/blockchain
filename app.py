@@ -1,13 +1,9 @@
-from hashlib import sha256
 import json
-import time
-from xml.etree.ElementTree import TreeBuilder
-from flask import Flask, request
-import requests
+import copy
+from flask import Flask
 from random import seed, random
 import random
-import string
-from blockchain import Blockchain, Block
+from blockchain import Blockchain
 # curl  http://127.0.0.1:4000/check_validity
 
 seed(0)
@@ -22,19 +18,49 @@ def random_transaction():
 
 app =  Flask(__name__)
 blockchain = Blockchain()
+replica = Blockchain()
 
-# Mining a new block
-@app.route('/mine_block', methods=['GET'])
-def mine_block(): 
-
+def add_block(blockchain):
     for t in range(random.randint(0, 5)):
         blockchain.add_new_transaction(random_transaction())
         
     block = blockchain.mine()
+
+
+
+# Mining a new block
+@app.route('/mine_blocks', methods=['GET'])
+def mine_blocks():
+    global blockchain
+    global replica
+    attacker_compute_power = 0.999 ## the higher this value is, the lower the security of the system
+    while True:
+        p = random.random()
+        if p > attacker_compute_power:
+            for t in range(random.randint(0, 5)):
+                blockchain.add_new_transaction(random_transaction())
+                
+            block = blockchain.mine()
+        else:
+            for t in range(random.randint(0, 5)):
+                replica.add_new_transaction(random_transaction())
+                
+            block = replica.mine()
+        
+        if len(blockchain.chain) - len(replica.chain) > 5:
+            print("block chain won")
+            replica = copy.deepcopy(blockchain)
+            break
+        elif len(replica.chain) - len(blockchain.chain) > 5:
+            print("attacker says haha!")
+            blockchain = copy.deepcopy(replica)
+            break
+    
     chain_data = []
     for block in blockchain.chain:
         chain_data.append(block.__dict__)
     return json.dumps({"chain": chain_data})
+    
 
 # Mining a new block
 @app.route('/attack', methods=['GET'])

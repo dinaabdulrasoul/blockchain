@@ -33,9 +33,9 @@ class Blockchain:
         the chain. The block has index 0, previous_hash as 0, and
         a valid hash.
         """
-        genesis_block = Block(0, [], time.time(), "0")
-        genesis_block.hash = genesis_block.hash_computation()
-        self.chain.append(genesis_block)
+        self.genesis_block = Block(0, [], time.time(), "0")
+        self.genesis_block.hash = self.genesis_block.hash_computation()
+        self.chain.append(self.genesis_block)
 
     @property
     def last_block(self):
@@ -118,7 +118,5 @@ class Blockchain:
             if(current.previous_hash != previous.hash_computation()):
                 print("The previous block's hash does not equal the previous hash value stored in the current block.")
                 return False
-        return True
-
-
+        return True       
 
